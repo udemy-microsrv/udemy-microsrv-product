@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { PrismaService } from 'src/prisma.service';
+import { PaginationDto } from 'src/common/pagination/pagination.dto';
 
 @Injectable()
 export class ProductsService {
@@ -13,8 +14,24 @@ export class ProductsService {
     });
   }
 
-  findAll() {
-    return `This action returns all products`;
+  async findAll(paginationDto: PaginationDto) {
+    const { page, limit } = paginationDto;
+
+    const total = await this.prismaService.product.count();
+    const lastPage = Math.ceil(total / limit);
+
+    return {
+      data: await this.prismaService.product.findMany({
+        skip: (page - 1) * limit,
+        take: limit,
+      }),
+      meta: {
+        page,
+        limit,
+        total,
+        lastPage,
+      },
+    };
   }
 
   findOne(id: number) {
