@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import configuration from './config/configuration';
 import validationSchema from './config/env.validation';
+import { PrismaService } from './prisma.service';
 
 @Module({
   imports: [
@@ -12,6 +13,6 @@ import validationSchema from './config/env.validation';
     }),
   ],
   controllers: [],
-  providers: [],
+  providers: [PrismaService],
 })
 export class AppModule {}
