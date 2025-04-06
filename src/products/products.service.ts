@@ -24,6 +24,7 @@ export class ProductsService {
       data: await this.prismaService.product.findMany({
         skip: (page - 1) * limit,
         take: limit,
+        where: { deletedAt: null },
       }),
       meta: {
         page,
@@ -38,6 +39,7 @@ export class ProductsService {
     const product = await this.prismaService.product.findUnique({
       where: {
         id,
+        deletedAt: null,
       },
     });
 
@@ -57,7 +59,14 @@ export class ProductsService {
     });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} product`;
+  async remove(id: number) {
+    await this.findOne(id);
+
+    return this.prismaService.product.update({
+      where: { id },
+      data: {
+        deletedAt: new Date(),
+      },
+    });
   }
 }
