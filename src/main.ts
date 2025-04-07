@@ -2,10 +2,21 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import { Logger, ValidationPipe } from '@nestjs/common';
+import { AsyncMicroserviceOptions, Transport } from '@nestjs/microservices';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-  const port = app.get(ConfigService).get<number>('app.port') ?? 3000;
+  const app = await NestFactory.createMicroservice<AsyncMicroserviceOptions>(
+    AppModule,
+    {
+      useFactory: (configService: ConfigService) => ({
+        transport: Transport.TCP,
+        options: {
+          port: configService.get('app.port'),
+        },
+      }),
+      inject: [ConfigService],
+    },
+  );
 
   app.useGlobalPipes(
     new ValidationPipe({
@@ -14,9 +25,12 @@ async function bootstrap() {
     }),
   );
 
-  await app.listen(port);
+  await app.listen();
 
   const logger = new Logger('bootstrap');
-  logger.log(`Server is listening on port ${port}`);
+  logger.log(
+    `Microservice is listening on port ${app.get(ConfigService).get('app.port')}`,
+  );
 }
+
 bootstrap();
