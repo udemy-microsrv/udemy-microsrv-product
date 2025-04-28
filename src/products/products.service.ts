@@ -51,6 +51,18 @@ export class ProductsService {
     return product;
   }
 
+  async findMany(ids: number[]) {
+    const products = await this.prismaService.product.findMany({
+      where: { id: { in: ids } },
+    });
+
+    if (products.length !== ids.length) {
+      throwRpcException(HttpStatus.BAD_REQUEST, 'Some products not found.');
+    }
+
+    return products;
+  }
+
   async update(updateProductDto: UpdateProductDto) {
     const { id, ...data } = updateProductDto;
 

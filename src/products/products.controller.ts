@@ -1,4 +1,4 @@
-import { Controller, ParseIntPipe } from '@nestjs/common';
+import { Controller, ParseArrayPipe, ParseIntPipe } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
@@ -22,6 +22,13 @@ export class ProductsController {
   @MessagePattern({ cmd: 'product.find_one' })
   findOne(@Payload('id', ParseIntPipe) id: number) {
     return this.productsService.findOne(id);
+  }
+
+  @MessagePattern({ cmd: 'product.find_many' })
+  findMany(
+    @Payload('ids', new ParseArrayPipe({ items: Number })) ids: number[],
+  ) {
+    return this.productsService.findMany(ids);
   }
 
   @MessagePattern({ cmd: 'product.update' })
