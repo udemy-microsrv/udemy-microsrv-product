@@ -1,6 +1,8 @@
 export default () => ({
-  app: {
-    port: parseInt(process.env.PORT ?? '3001', 10),
+  transport: {
+    nats: {
+      servers: process.env.NATS_SERVERS?.split(','),
+    },
   },
   database: {
     url: process.env.DATABASE_URL,
