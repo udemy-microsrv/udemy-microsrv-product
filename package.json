@@ -1,6 +1,6 @@
 {
   "name": "udemy-microsrv-product",
-  "version": "1.2.0",
+  "version": "2.0.0",
   "description": "Microservice for managing products",
   "author": "Sebastian Torres Cabrera <sebastian.torres0426@gmail.com> (https://github.com/sebasbit)",
   "private": true,
